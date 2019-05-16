@@ -6,6 +6,27 @@ function grab(selector) {
   return document.querySelector(selector);
 }
 
+function slapPokeOnTheDOM(poke, pokemonList) {
+  const newPoke = document.createElement("li");
+
+  newPoke.innerHTML = `${poke.nickname} (${poke.species})
+      <button class="release" data-pokemon-id="${poke.id}">Release</button>`;
+
+
+
+  pokemonList.appendChild(newPoke);
+
+    const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
+    releaseButton.addEventListener("click", function(e){
+
+    newPoke.remove();
+    fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"})
+    .then(function(resp){
+      return resp.json()
+    })
+  })
+}
+
 fetch(TRAINERS_URL, {method: "GET"})
   .then(function (resp) {
     return resp.json();
@@ -27,35 +48,24 @@ fetch(TRAINERS_URL, {method: "GET"})
       const addButton = grab(`[data-trainer-id="${trainer.id}"]`)
         addButton.addEventListener("click",function(e){
           fetch(POKEMONS_URL, {
-          method:"POST",
-          headers:
-          {
-            'Content-Type': 'application/json'
-          },
-          body:
-          JSON.stringify({
-            "trainer_id": trainer.id
-          })
-
-          })
+          method: "POST",
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({"trainer_id": trainer.id})
+        })
           .then(function(resp){
             return resp.json();
           })
           .then(function(addPoke){
             if (!addPoke.error) {
-              // const pokemonList = grab(`#trainer-${trainer.id}-pokemon`);
-              // debugger
-              const addNewPoke = document.createElement("li")
-              pokemonList.appendChild(addNewPoke)
-              addNewPoke.innerHTML = `${addPoke.nickname} (${addPoke.species})
-                  <button class="release" data-pokemon-id="${addPoke.id}">Release</button>`;
+              slapPokeOnTheDOM(addPoke, pokemonList);
+              // const addNewPoke = document.createElement("li")
+              // pokemonList.appendChild(addNewPoke)
+              // addNewPoke.innerHTML = `${addPoke.nickname} (${addPoke.species})
+              //     <button class="release" data-pokemon-id="${addPoke.id}">Release</button>`;
+            } else {
+              alert("Can't have more than 6 Pokemon!")
             }
-
-
-
           })
-
-
         })
 
 
@@ -63,33 +73,29 @@ fetch(TRAINERS_URL, {method: "GET"})
       // list of each trainers pokemon
       const pokemonList = grab(`#trainer-${trainer.id}-pokemon`);
 
-      //
+      // BEGIN forEach poke
       trainer.pokemons.forEach(function (poke) {
-        const newPoke = document.createElement("li");
-
-        newPoke.innerHTML = `${poke.nickname} (${poke.species})
-            <button class="release" data-pokemon-id="${poke.id}">Release</button>`;
-
-
-
-        pokemonList.appendChild(newPoke);
-
-          const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
-          releaseButton.addEventListener("click", function(e){
-
-            newPoke.remove();
-            fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"})
-            .then(function(resp){
-              return resp.json()
-            })
-
-          })
-
-
-      });
-
-      // debugger;
-    }
+        slapPokeOnTheDOM(poke, pokemonList);
+        // const newPoke = document.createElement("li");
+        //
+        // newPoke.innerHTML = `${poke.nickname} (${poke.species})
+        //     <button class="release" data-pokemon-id="${poke.id}">Release</button>`;
+        //
+        //
+        //
+        // pokemonList.appendChild(newPoke);
+        //
+        //   const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
+        //   releaseButton.addEventListener("click", function(e){
+        //
+        //   newPoke.remove();
+        //   fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"})
+        //   .then(function(resp){
+        //     return resp.json()
+        //   })
+        // })
+      }); //END OF forEach poke
+    } // END OF for trainer of trainersARR
   });
 
 
