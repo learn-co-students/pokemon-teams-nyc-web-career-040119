@@ -14,8 +14,6 @@ function slapPokeOnTheDOM(poke, pokemonList) {
   newPoke.innerHTML = `${poke.nickname} (${poke.species})
       <button class="release" data-pokemon-id="${poke.id}">Release</button>`;
 
-
-
   pokemonList.appendChild(newPoke);
 
     const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
@@ -29,6 +27,7 @@ function slapPokeOnTheDOM(poke, pokemonList) {
   })
 }
 
+// BEGIN FETCH ///////////////
 fetch(TRAINERS_URL, {method: "GET"})
   .then(function (resp) {
     return resp.json();
@@ -66,13 +65,11 @@ fetch(TRAINERS_URL, {method: "GET"})
           })
         })
 
-
-
       // list of each trainers pokemon
       const pokemonList = grab(`#trainer-${trainer.id}-pokemon`);
 
-      trainer.pokemons.forEach(function (poke) {
+      for (const poke of trainer.pokemons) {
         slapPokeOnTheDOM(poke, pokemonList);
-      });
+      }
     } // END OF for trainer of trainersARR
   });
