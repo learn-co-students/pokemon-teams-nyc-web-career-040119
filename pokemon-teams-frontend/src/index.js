@@ -2,30 +2,96 @@ const BASE_URL = "http://localhost:3000"
 const TRAINERS_URL = `${BASE_URL}/trainers`
 const POKEMONS_URL = `${BASE_URL}/pokemons`
 
+  function grab(selector){
+    return document.querySelector(selector)
+  };
 
-function grab(selector) {
-  return document.querySelector(selector);
+
+// find trainers and slap them on the dom
+
+const trainerContainer = grab("#trainer-container")
+
+fetch(TRAINERS_URL)
+.then(function(resp){
+  return resp.json();
+}).then(function(trainers){
+
+  // trainers to dom
+  trainers.forEach(function(trainer){
+    const eachTrainer = document.createElement('li')
+      // console.log(trainer)
+    eachTrainer.innerHTML = `
+      <div class="card" data-id=${trainer.id}><p>${trainer.name}</p>
+      <button data-trainer-id=${trainer.id}>Add Pokemon</button>
+      <ul id="ul${trainer.id}">
+      </ul>
+    </div>
+    `
+
+    trainerContainer.appendChild(eachTrainer);
+    addFunction(trainer, trainer.pokemon);
+
+    trainer.pokemons.forEach(function(pokemon){
+      const eachPokemon = document.createElement('li')
+
+      const trainerUL = grab(`#ul${trainer.id}`)
+
+      eachPokemon.innerHTML = `${pokemon.nickname}(${pokemon.species}) <button class="release" data-pokemon-id="${trainer.id}-${pokemon.id}">Release</button>`
+
+
+      trainerUL.appendChild(eachPokemon)
+
+      releaseFunction(eachPokemon, trainer, pokemon);
+    })//each pokemon
+
+
+  })//each trainer
+
+})
+
+
+function addFunction(trainer) {
+  const addButton = grab(`[data-trainer-id="${trainer.id}"]`)
+
+  addButton.addEventListener("click",function(event){
+
+    fetch(POKEMONS_URL,
+      {method:"POST",
+      headers:{
+        'Content-Type': 'application/json'
+      },
+      body:
+      JSON.stringify({"trainer_id": `${trainer.id}`})
+
+    })
+    .then(function(resp){
+      return resp.json();
+    }).then(function(pokemon){
+      if (!(pokemon.error)) {
+        const eachPokemon = document.createElement('li')
+
+        eachPokemon.innerHTML += `<li>${pokemon.nickname}(${pokemon.species}) <button class="release" data-pokemon-id="${pokemon.id}">Release</button></li>`
+        const trainerUL = grab(`#ul${trainer.id}`)
+        trainerUL.appendChild(eachPokemon)
+      } else {
+        return alert(pokemon.error)
+
+      }
+    })// then end
+  })//add button event listener
 }
 
-//////////////////////// fetch begins
-fetch(TRAINERS_URL, {method:"GET"})
-  .then((response)=>{
-    return response.json();
-  })
-  .then((trainerObj) => {
-    const main = document.querySelector("#main")
-    trainerObj.forEach(function (trainer, trainer_index) {
-      main.innerHTML += `
-      <div class="card" data-id="${trainer_index}"><p>${trainer.name}</p>
-      <button id="b${trainer_index}" data-trainer-id="${trainer_index}">Add Pokemon</button>
-      <ul id="ul${trainer_index}">
-      </ul>
-      </div>`
-      trainer.pokemons.forEach(function (pokemon, poke_index) {
-        const ul = document.querySelector(`#ul${trainer_index}`)
-        ul.innerHTML += `
-        <li>${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${poke_index}">Release</button></li>
-        `
+function releaseFunction(eachPokemon, trainer, pokemon) {
+  const releaseButton = grab(`[data-pokemon-id="${trainer.id}-${pokemon.id}"]`)
+
+  releaseButton.addEventListener("click",function(event){
+
+      eachPokemon.remove();
+      fetch(POKEMONS_URL + "/" + `${pokemon.id}`,
+      {method:"DELETE"} ).then(function(resp){
+        return resp.json();
+
       })
-    })
-  })
+
+    })//end of releaseButton listener
+}
