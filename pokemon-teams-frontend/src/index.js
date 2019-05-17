@@ -54,8 +54,11 @@ fetch(TRAINERS_URL)
           return res.json()
         })
         .then(function(pokemon){
+          if (pokemon.error === undefined){
           cb(pokemon)
-          console.log(pokemon)
+        }else{
+          alert(`${pokemon.error}`)
+        }
         })
       })
 
