@@ -12,37 +12,20 @@ fetch(TRAINERS_URL, {method:"GET"})
   .then((response)=>{
     return response.json();
   })
-  .then((trainersArr) => {
-
-    /////// Have TrainersARR, can start creating html
-    const trainerContainer = grab('#trainer-container')
-
-
-
-
-    for (const trainer of trainersArr) {
-      const trainerDiv = document.createElement('div');
-
-      ////// create new div so div props can be targeted
-      trainerDiv.innerHTML += `
-      <div class="card" data-id="${trainer.id}"><p>${trainer.name}</p>
-        <button data-trainer-id="${trainer.id}">ADD POKEMON</button>
-        <ul id="trainer-${trainer.id}-pokemon">
-
-        </ul>
-      </div>
-      `
-      trainerContainer.appendChild(trainerDiv);
-    }
-
-    const pokemonList = grab(`#trainer-${trainer.id}-pokemon`);
-    for (const pokemon of trainer.pokemons) {
-      const pokemon = document.createElement('li');
-      pokemon.innerHTML += `
-        ${pokemon.nickname} (${pokemon.species})
-        <button class="release" data-pokemon-id="${pokemon.id}">Release</button>
-      `
-      return pokemonList.appendChild(pokemon)
-    }
-
+  .then((trainerObj) => {
+    const main = document.querySelector("#main")
+    trainerObj.forEach(function (trainer, trainer_index) {
+      main.innerHTML += `
+      <div class="card" data-id="${trainer_index}"><p>${trainer.name}</p>
+      <button id="b${trainer_index}" data-trainer-id="${trainer_index}">Add Pokemon</button>
+      <ul id="ul${trainer_index}">
+      </ul>
+      </div>`
+      trainer.pokemons.forEach(function (pokemon, poke_index) {
+        const ul = document.querySelector(`#ul${trainer_index}`)
+        ul.innerHTML += `
+        <li>${pokemon.nickname} (${pokemon.species}) <button class="release" data-pokemon-id="${poke_index}">Release</button></li>
+        `
+      })
+    })
   })
