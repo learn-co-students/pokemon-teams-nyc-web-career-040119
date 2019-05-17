@@ -55,8 +55,8 @@ fetch(TRAINERS_URL)
         })
         .then(function(pokemon){
           if (pokemon.error === undefined){
-          cb(pokemon)
-        }else{
+            cb(pokemon)
+          }else{
           alert(`${pokemon.error}`)
         }
         })
