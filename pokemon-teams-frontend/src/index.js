@@ -36,7 +36,7 @@ fetch(TRAINERS_URL)
 
       const trainerUL = grab(`#ul${trainer.id}`)
 
-      eachPokemon.innerHTML = `${pokemon.nickname}(${pokemon.species}) <button class="release" data-pokemon-id="${trainer.id}-${pokemon.id}">Release</button>`
+      eachPokemon.innerHTML += `${pokemon.nickname}(${pokemon.species}) <button class="release" data-pokemon-id="${trainer.id}-${pokemon.id}">Release</button>`
 
 
       trainerUL.appendChild(eachPokemon)
