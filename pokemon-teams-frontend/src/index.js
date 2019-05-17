@@ -20,18 +20,18 @@ function slapPokeOnTheDOM(poke, pokemonList) {
     releaseButton.addEventListener("click", function(e){
 
     newPoke.remove();
-    fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"})
-    .then(function(resp){
-      return resp.json()
-    })
+    fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"}) //.then NOT NECESSARY, WE DON'T NEED A RESP FOR DELETE
   })
 }
+
+
 
 // BEGIN FETCH ///////////////
 fetch(TRAINERS_URL, {method: "GET"})
   .then(function (resp) {
     return resp.json();
-  }).then(function (trainersArr) {
+  })
+  .then(function (trainersArr) {
     const trainerContainer = grab("#trainer-container");
 
     for (const trainer of trainersArr) {
@@ -42,13 +42,14 @@ fetch(TRAINERS_URL, {method: "GET"})
           <ul id="trainer-${trainer.id}-pokemon">
             <!-- POKEMON GO HERE -->
           </ul>
-        </div>`;
+        </div>
+      `;
 
       trainerContainer.appendChild(trainerDiv);
       // add button
       const addButton = grab(`[data-trainer-id="${trainer.id}"]`)
-        addButton.addEventListener("click",function(e){
-          fetch(POKEMONS_URL, {
+      addButton.addEventListener("click",function(e){
+        fetch(POKEMONS_URL, {
           method: "POST",
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({"trainer_id": trainer.id})
@@ -57,13 +58,9 @@ fetch(TRAINERS_URL, {method: "GET"})
             return resp.json();
           })
           .then(function(addPoke){
-            if (!addPoke.error) {
-              slapPokeOnTheDOM(addPoke, pokemonList);
-            } else {
-              alert("Can't have more than 6 Pokemon!")
-            }
+            !addPoke.error ? slapPokeOnTheDOM(addPoke, pokemonList) : alert(addPoke.error)
           })
-        })
+      })
 
       // list of each trainers pokemon
       const pokemonList = grab(`#trainer-${trainer.id}-pokemon`);
@@ -72,4 +69,4 @@ fetch(TRAINERS_URL, {method: "GET"})
         slapPokeOnTheDOM(poke, pokemonList);
       }
     } // END OF for trainer of trainersARR
-  });
+  }); // END OF SECOND .then
