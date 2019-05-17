@@ -16,9 +16,8 @@ function slapPokeOnTheDOM(poke, pokemonList) {
 
   pokemonList.appendChild(newPoke);
 
-    const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
-    releaseButton.addEventListener("click", function(e){
-
+  const releaseButton = grab(`[data-pokemon-id="${poke.id}"]`)
+  releaseButton.addEventListener("click", () => {
     newPoke.remove();
     fetch(POKEMONS_URL + "/" + poke.id, {method: "DELETE"}) //.then NOT NECESSARY, WE DON'T NEED A RESP FOR DELETE
   })
@@ -28,10 +27,8 @@ function slapPokeOnTheDOM(poke, pokemonList) {
 
 // BEGIN FETCH ///////////////
 fetch(TRAINERS_URL, {method: "GET"})
-  .then(function (resp) {
-    return resp.json();
-  })
-  .then(function (trainersArr) {
+  .then(resp => resp.json())
+  .then(trainersArr => {
     const trainerContainer = grab("#trainer-container");
 
     for (const trainer of trainersArr) {
@@ -54,10 +51,8 @@ fetch(TRAINERS_URL, {method: "GET"})
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify({"trainer_id": trainer.id})
         })
-          .then(function(resp){
-            return resp.json();
-          })
-          .then(function(addPoke){
+          .then(resp => resp.json())
+          .then(addPoke => {
             !addPoke.error ? slapPokeOnTheDOM(addPoke, pokemonList) : alert(addPoke.error)
           })
       })
