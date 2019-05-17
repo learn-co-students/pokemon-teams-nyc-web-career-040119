@@ -83,13 +83,21 @@ function addPokemon(trainer){
         const trainerPokemons = document.querySelector(`#trainer-${trainer.id}-pokemons`)
         const newPokemon = document.createElement("li")
 
-        newPokemon.id = pokemon.id
+        newPokemon.id = `pokemon-${pokemon.id}`
         newPokemon.innerHTML += `
           ${pokemon.nickname}
           (${pokemon.species})
           <button class="release" data-pokemon-id="${pokemon.id}">Release</button>
         `
         trainerPokemons.appendChild(newPokemon)
+
+        // RELEASE POKEMON
+        const releaseButton = document.querySelector(`[data-pokemon-id="${pokemon.id}"]`)
+        releaseButton.addEventListener('click', function(event){
+          const currentPokemon = document.querySelector(`#pokemon-${pokemon.id}`)
+          currentPokemon.remove()
+          return releasePokemon(pokemon)
+        }) // end trainersContainer active listener
       } else {
         // else throw the error and prevent the above from happening
         alert(pokemon.error)
