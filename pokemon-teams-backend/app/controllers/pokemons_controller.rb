@@ -1,7 +1,17 @@
 require 'faker'
 
 class PokemonsController < ApplicationController
+  # def index
+  #   @pokemons = Pokemon.all
+  #   render json: @pokemons
+  # end
+
+  def new
+    @pokemon = Pokemon.new
+  end
+
   def create
+    # byebug
     unless pokemon_params[:trainer_id].nil?
       default = {}
 
@@ -38,4 +48,5 @@ class PokemonsController < ApplicationController
   def pokemon_params
     params.require(:pokemon).permit(:nickname, :species, :trainer_id)
   end
+
 end
