@@ -30,6 +30,7 @@ div.card {
   box-shadow: 10px 10px grey;
   padding: 10px;
   border-radius: 10px;
+
 }
 
 p {
@@ -67,3 +68,5 @@ button.release {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
 }
+
+
